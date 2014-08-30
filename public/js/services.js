@@ -19,7 +19,6 @@ myJmvServices.service('lastResultService', function() {
         resultName = name;
     }
 
-<<<<<<< HEAD
 });
 
 myJmvServices.service('configService', function($http, $q) {
@@ -62,6 +61,5 @@ myJmvServices.service('configService', function($http, $q) {
         currentConfig = config;
     };
 
-=======
->>>>>>> 36fe10d9df293e115230a118483fb22b1721033e
+
 });

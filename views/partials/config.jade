@@ -1,13 +1,8 @@
 h2 Configuration
-<<<<<<< HEAD
 div.alerts
     alert(ng-repeat="alert in alerts" type="{{alert.type}}") {{alert.msg}}
 div(ng-controller="ConfigFormCtrl")
     form(name="configForm", sf-schema="schema", sf-form="form", sf-model="model", ng-submit="onSubmit(configForm)")
-=======
-    div(ng-controller="ConfigFormCtrl")
-        form(sf-schema="schema", sf-form="form", sf-model="model")
-        pre {{form}}
->>>>>>> 36fe10d9df293e115230a118483fb22b1721033e
+
 
 

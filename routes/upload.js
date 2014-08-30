@@ -19,10 +19,9 @@ var randomString = function (len, bits)
 
 router.post("/", function(req, res) {    
 	var currentFolder = randomString(12);
-<<<<<<< HEAD
+
 	var cwd = process.cwd();
-=======
->>>>>>> 36fe10d9df293e115230a118483fb22b1721033e
+
 	if(req.files) {
 
 		mkdirp('./results/' + currentFolder + '/files/', function(err) {   
@@ -36,17 +35,10 @@ router.post("/", function(req, res) {
 								if (err) throw err;
 							  	console.log('successfully deleted ./results/' + currentFolder + '/files/' + req.files.file.originalname);
 							  	exec('/usr/bin/checkstyle -c ' + cwd + '/config/checkstyle_config.xml -f xml -o ' 
-<<<<<<< HEAD
 									+ cwd + '/results/' + currentFolder + '/checkstyle/output.xml  \-r ' 
 									+ cwd + '/results/' + currentFolder + '/files/', function (error, stdout, stderr) {
 										console.log(stdout);
 				  						console.log(stderr);
-				  						
-=======
-									+ process.cwd() + '/results/' + currentFolder + '/checkstyle/output.xml  \-r ' 
-									+ process.cwd() + '/results/' + currentFolder + '/files/', function (error, stdout, stderr) {
-										//req.session.lastResult = currentFolder;
->>>>>>> 36fe10d9df293e115230a118483fb22b1721033e
 							  			res.json({ path: currentFolder }); 
 							  			res.end();
 								});
@@ -55,18 +47,11 @@ router.post("/", function(req, res) {
 						});
 					} else{
 						exec('/usr/bin/checkstyle -c ' + cwd + '/config/checkstyle_config.xml -f xml -o ' 
-<<<<<<< HEAD
 							+ cwd + '/results/' + currentFolder + '/checkstyle/output.xml  \-r ' 
 							+ cwd + '/results/' + currentFolder + '/files/', function (error, stdout, stderr) {
 
 					  			console.log(stdout);
 					  			console.log(stderr);
-=======
-							+ process.cwd() + '/results/' + currentFolder + '/checkstyle/output.xml  \-r ' 
-							+ process.cwd() + '/results/' + currentFolder + '/files/', function (error, stdout, stderr) {
-								//req.session.lastResult = currentFolder;
-					  			console.log(stdout);
->>>>>>> 36fe10d9df293e115230a118483fb22b1721033e
 					  			res.json({ path: currentFolder });
 					  			res.end();     
 						});

@@ -19,13 +19,12 @@ router.get('/api', function(req, res) {
             });
         });
     });
-<<<<<<< HEAD
 });
 
 
 router.get('/defaults', function(req, res) {
     var cwd = process.cwd();
-    //var fs = require('fs-extra');
+    var fs = require('fs-extra');
 
     fs.copy(cwd + '/config/defaults.xml', cwd + '/config/checkstyle_config.xml', function(err){
         res.json({
@@ -60,9 +59,7 @@ router.post('/api', function(req, res) {
         });
     })
 
-    
-=======
->>>>>>> 36fe10d9df293e115230a118483fb22b1721033e
+
 
 });
 
