@@ -20,3 +20,45 @@ myJmvServices.service('lastResultService', function() {
     }
 
 });
+
+myJmvServices.service('configService', function($http, $q) {
+    this.currentConfig = {};
+    this.getCurrentConfig = function() {
+        var deferred = $q.defer();
+        var self = this; 
+
+        if(Object.keys(self.currentConfig).length === 0) {
+            console.log("getting config from server");
+            $http.get('/config/api').
+                success(function(data, status, headers, config) {
+                    console.log("this is me:", self);
+                    self.currentConfig = JSON.parse(data.data);
+                    deferred.resolve();
+                });
+        }else{
+            deferred.resolve();
+        }
+        return deferred.promise;
+
+    };
+    this.saveCurrentConfig = function(){
+        var deferred = $q.defer();
+        var self = this; 
+        
+        $http({
+            url: '/config/api',
+            method: "POST",
+            data: JSON.stringify(self.currentConfig),
+            headers: {'Content-Type': 'application/json'}
+        }).success(function (data, status, headers, config) {
+            deferred.resolve(true);
+        }).error(function (data, status, headers, config) {
+            deferred.resolve(false);
+        });
+        return deferred.promise;
+    };
+    this.setCurrentConfig = function(config) { 
+        currentConfig = config;
+    };
+
+});

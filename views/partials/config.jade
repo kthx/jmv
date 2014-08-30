@@ -1,6 +1,7 @@
 h2 Configuration
-    div(ng-controller="ConfigFormCtrl")
-        form(sf-schema="schema", sf-form="form", sf-model="model")
-        pre {{form}}
+div.alerts
+    alert(ng-repeat="alert in alerts" type="{{alert.type}}") {{alert.msg}}
+div(ng-controller="ConfigFormCtrl")
+    form(name="configForm", sf-schema="schema", sf-form="form", sf-model="model", ng-submit="onSubmit(configForm)")
 
 

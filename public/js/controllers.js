@@ -3,43 +3,110 @@
 /* Controllers */
 
 function IndexCtrl($scope, $http) {
-  $http.get('/').
-    success(function(data, status, headers, config) {
-      $scope.title = "JVM";
-      $scope.alerts = [];
-    });
+    $http.get('/').
+        success(function(data, status, headers, config) {
+            $scope.title = "JVM";
+            $scope.alerts = [];
+        });
 }
-function ConfigCtrl($scope, $http) {
-  $http.get('/config/api').
-    success(function(data, status, headers, config) {
-      var config = JSON.parse(data.data);
-      console.log(JSON.parse(data.data));
-
-      $scope.config = config.module;
-    });
+function ConfigCtrl($scope, $http, configService) {
+    $scope.alerts = [];
 }
-function ConfigFormCtrl($scope) {
-  $scope.schema = {
+function ConfigFormCtrl($scope, configService) {
+  /*var schema = {
     type: "object",
-    properties: {
-      name: { type: "string", minLength: 2, title: "Name", description: "Name or alias" },
-      title: {
-        type: "string",
-        enum: ['dr','jr','sir','mrs','mr','NaN','dj']
-      }
-    }
+    properties: {}
   };
+  configService.getCurrentConfig().then(function () {
+    var currentConfig = configService.currentConfig;
 
-  $scope.form = [
-      "*",
-      {
-        type: "submit",
-        title: "Save"
-      }
+    console.log(currentConfig);
+
+    angular.forEach(currentConfig.module.module, function(value, key) {
+      console.log(value)
+
+      this[value.$.name] = { 
+        type: "fieldset",
+        title: "Name",
+        items: [
+          { "severity": {"type": "string","title": "Name"}}
+         ]
+       };
+     }, schema.properties);
+  });
+
+
+*/
+  
+
+  
+    $scope.schema = {
+        type: "object",
+        properties: {
+            severity: { 
+                type: "string", 
+                /*titleMap:[
+                    { value: "error", name: "error" },
+                    { value: "warning", name: "warning" },
+                    { value: "info", name: "info" },
+                    { value: "ignore", name: "ignore" },
+                ],*/
+                enum: [
+                    "error",
+                    "warning",
+                    "info",
+                    "ignore",
+                ],
+                description: "Set to ignore to disable this check" },
+        }
+    };
+
+    $scope.form = [
+        {
+            type: "fieldset",
+            title: "test",
+            items: [ 
+                {
+                    key: "severity",
+                    onChange: function(modelValue,form) {
+                        configService.currentConfig.module.module[0].property[4].$.value = modelValue;
+                    }
+                }
+            ]
+        }, 
+        {
+            type: "submit",
+            title: "Save"
+        }
     ];
 
-  $scope.model = {};
-}
+
+    configService.getCurrentConfig().then(function () {
+        var currentConfig = configService.currentConfig;
+
+        $scope.model = {
+            severity : currentConfig.module.module[0].property[4].$.value
+        };
+    });
+
+    $scope.onSubmit = function(form) {
+        // First we broadcast an event so all fields validate themselves
+        $scope.$broadcast('schemaFormValidate');
+
+        // Then we check if the form is valid
+        if (form.$valid) {
+            console.log(configService.currentConfig.module.module[0].property[4].$.value);
+            configService.saveCurrentConfig().then(function (result) {
+                $scope.$parent.alerts = [];
+                if(result) {
+                    $scope.$parent.alerts.push({msg: 'Configuration saved successfully', type: 'success'});
+                }else{
+                    $scope.$parent.alerts.push({msg: 'Error saving configuration', type: 'danger'});
+                }
+            });
+        }
+  }
+};
 
 
 function HeaderCtrl($scope, $location, lastResultService) {
