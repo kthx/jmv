@@ -1,0 +1,21 @@
+button(ng-click="upload.abort()") Cancel Upload
+        div(ng-show="selectedFiles != null")
+            div(class="sel-file", ng-repeat="f in selectedFiles")
+                span {{($index + 1) + '.'}}
+                img(ng-show="dataUrls[$index]", ng-src="{{dataUrls[$index]}}")
+                button(class="button", ng-click="start($index)", ng-show="progress[$index] < 0") Start
+                span(class="progress", ng-show="progress[$index] >= 0")                      
+                    div(style="width:{{progress[$index]}}%") {{progress[$index]}}%             
+                button(class="button", ng-click="abort($index)", ng-show="hasUploader($index) && progress[$index] < 100") Abort
+                span {{f.name}} - size: {{f.size}}B - type: {{f.type}}
+        div(class="response", ng-show="uploadResult.length > 0")
+            Server Response:
+            ul
+                li(ng-repeat="result in uploadResult")
+                    ul
+                        li(ng-repeat="item in result.result")
+                            div(data-ng-show="item.name") file name: {{item.name}}
+                            div(data-ng-show="item.fieldName") name: {{item.fieldName}}
+                            div(data-ng-show="item.size") size on the serve: {{item.size}}
+                            div(data-ng-show="item.value") value: {{item.value}}
+                    div(data-ng-show="result.requestHeaders", class="reqh") request headers: {{result.requestHeaders}}
