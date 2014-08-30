@@ -19,6 +19,7 @@ router.get('/api', function(req, res) {
             });
         });
     });
+<<<<<<< HEAD
 });
 
 
@@ -60,6 +61,8 @@ router.post('/api', function(req, res) {
     })
 
     
+=======
+>>>>>>> 36fe10d9df293e115230a118483fb22b1721033e
 
 });
 

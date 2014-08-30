@@ -3,6 +3,7 @@
 /* Controllers */
 
 function IndexCtrl($scope, $http) {
+<<<<<<< HEAD
     $http.get('/').
         success(function(data, status, headers, config) {
             $scope.title = "JVM";
@@ -107,6 +108,45 @@ function ConfigFormCtrl($scope, configService) {
         }
   }
 };
+=======
+  $http.get('/').
+    success(function(data, status, headers, config) {
+      $scope.title = "JVM";
+      $scope.alerts = [];
+    });
+}
+function ConfigCtrl($scope, $http) {
+  $http.get('/config/api').
+    success(function(data, status, headers, config) {
+      var config = JSON.parse(data.data);
+      console.log(JSON.parse(data.data));
+
+      $scope.config = config.module;
+    });
+}
+function ConfigFormCtrl($scope) {
+  $scope.schema = {
+    type: "object",
+    properties: {
+      name: { type: "string", minLength: 2, title: "Name", description: "Name or alias" },
+      title: {
+        type: "string",
+        enum: ['dr','jr','sir','mrs','mr','NaN','dj']
+      }
+    }
+  };
+
+  $scope.form = [
+      "*",
+      {
+        type: "submit",
+        title: "Save"
+      }
+    ];
+
+  $scope.model = {};
+}
+>>>>>>> 36fe10d9df293e115230a118483fb22b1721033e
 
 
 function HeaderCtrl($scope, $location, lastResultService) {
