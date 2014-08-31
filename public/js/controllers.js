@@ -57,15 +57,52 @@ function ConfigFormCtrl($scope, configService) {
 
                     angular.forEach(value.property, function(pNode, key) { 
 
-                        var propVal = (isNaN(pNode.$.value) ? pNode.$.value:  parseInt(pNode.$.value));
-                        console.log(id);
+                        var propVal = pNode.$.value;
+
+                        if(isNaN(propVal)) {
+                            if(propVal == 'true') {
+                                propVal = true;
+                            }
+                            if(propVal == 'false') {
+                                propVal = false;
+                            }
+                        }else{
+                            propVal = parseInt(propVal);
+                        }
+
+                            
 
                         scopeModel[id + pNode.$.name] = propVal;
 
-                        if(pNode.$.name == "format") {
+                        if(
+                            pNode.$.name == "format"
+                            ||pNode.$.name == "message"
+                            ||pNode.$.name == "groups"
+                            ||pNode.$.name == "option"
+                            ||pNode.$.name == "scope"
+                            ||pNode.$.name == "ignorePattern"
+                        ) {
                             schemaFields[id + pNode.$.name] = {
                                 type: "string",
                                 fieldType: "string", 
+                            };
+                        }
+
+                        if(
+                            pNode.$.name == "allowMissingJavadoc"
+                            ||pNode.$.name == "allowMissingParamTags"
+                            ||pNode.$.name == "allowMissingReturnTag"
+                            ||pNode.$.name == "allowMissingThrowsTags"
+                            ||pNode.$.name == "allowThrowsTagsForSubclasses"
+                            ||pNode.$.name == "allowUndeclaredRTE"
+                            ||pNode.$.name == "applyToPublic"
+                            ||pNode.$.name == "applyToProtected"
+                            ||pNode.$.name == "applyToPackage"
+                            ||pNode.$.name == "applyToPrivate"
+                        ) {
+                            schemaFields[id + pNode.$.name] = {
+                                type: "boolean",
+                                fieldType: "checkbox", 
                             };
                         }
 
@@ -82,13 +119,6 @@ function ConfigFormCtrl($scope, configService) {
                             };
                         }
 
-
-                        if(pNode.$.name == "message") {
-                            schemaFields[id + pNode.$.name] = {
-                                type: "string", 
-                                fieldType: "string",
-                            };
-                        }
 
                         if(pNode.$.name == "excludedClasses") {
                             schemaFields[id + pNode.$.name] = {
@@ -112,6 +142,20 @@ function ConfigFormCtrl($scope, configService) {
                             };
                         }
 
+                        if(pNode.$.name == "lineSeparator") {
+                            schemaFields[id + pNode.$.name] = {
+                                type: "string",
+                                fieldType: "select",
+                                enum: [
+                                    "system",
+                                    "crlf",
+                                    "cr",
+                                    "lf",
+                                ],
+                                description: "type of line separator"  
+                            };
+                        }
+
                         if(pNode.$.name == "tokens") {
                             schemaFields[id + pNode.$.name] = {
                                 type: "string",
@@ -120,6 +164,14 @@ function ConfigFormCtrl($scope, configService) {
                             };
                         }
 
+                        if(pNode.$.name == "fileExtensions") {
+                            schemaFields[id + pNode.$.name] = {
+                                type: "string",
+                                fieldType: "string",
+                                description: "file type extension of the files to check as a sep comma list"  
+                            };
+                        }
+                            
                         var prop = {
                             key: id + pNode.$.name,
                             type: schemaFields[id + pNode.$.name].fieldType,
@@ -189,6 +241,7 @@ function ConfigFormCtrl($scope, configService) {
         // Then we check if the form is valid
         if (form.$valid) {
             configService.saveCurrentConfig().then(function (result) {
+
                 $scope.$parent.alerts = [];
                 if(result) {
                     $scope.$parent.alerts.push({msg: 'Configuration saved successfully', type: 'success'});
@@ -213,6 +266,9 @@ function HeaderCtrl($scope, $location, lastResultService) {
     };
 }
 
+var TabsCtrl = function ($scope) {
+
+};
 function UploadCtrl($scope, $upload, $location, lastResultService) {
   $scope.onFileSelect = function($files) {
 
@@ -249,12 +305,157 @@ function UploadCtrl($scope, $upload, $location, lastResultService) {
 };
 
 function ResultsCtrl($scope, $http, $routeParams, $window, lastResultService) {
-  $http.get('/results/api/' + $routeParams.id).
-    success(function(data) {
-      lastResultService.setLastResult($routeParams.id);
-      $scope.currentUrl = data.currentUrl;
-      $scope.results = data;
-      $scope.cResults = data.checkstyleResults;
+    $http.get('/results/api/' + $routeParams.id).
+        success(function(data) {
+            lastResultService.setLastResult($routeParams.id);
+            $scope.currentUrl = data.currentUrl;
+            $scope.results = data;
+            $scope.cResults = data.checkstyleResults;
+
+            var rows = [];
+            angular.forEach(data.checkstyleResults.checkstyle.file, function(value, key) {  
+                var row = {
+                    "c": [
+                        {
+                            "v": value.$.name.split('/')[value.$.name.split('/').length -1]
+                        },
+                        {
+                            "v": $.grep(value.error, function(item){ return item.$.severity == "error"}).length
+                        },
+                        {
+                            "v": $.grep(value.error, function(item){ return item.$.severity == "warning"}).length
+                        },
+                        {
+                            "v": $.grep(value.error, function(item){ return item.$.severity == "info"}).length
+                        }
+                    ]
+                };
+                this.push(row);
+            }, rows);
+
+            var chart = {
+                "type": "ColumnChart",
+                "cssStyle": "height:400px; width:100%;",
+                "data": {
+                "cols": [
+                  {
+                    "id": "file",
+                    "label": "File",
+                    "type": "string",
+                    "p": {}
+                  },
+                  {
+                    "id": "error",
+                    "label": "Error",
+                    "type": "number",
+                    "p": {}
+                  },
+                  {
+                    "id": "warning",
+                    "label": "Warning",
+                    "type": "number",
+                    "p": {}
+                  },
+                  {
+                    "id": "info",
+                    "label": "Info",
+                    "type": "number",
+                    "p": {}
+                  }
+                ],
+                "rows": rows
+                },
+                "options": {
+                    "title": "Results per file and type",
+                    "isStacked": "true",
+                    "fill": 20,
+                    "displayExactValues": true,
+                    "vAxis": {
+                        "title": "Amount",
+                        "gridlines": {
+                            "count": 6
+                        }
+                    },
+                    "hAxis": {
+                        "title": "Files"
+                    }
+                },
+                "formatters": {},
+                "displayed": true
+            };
+
+            var pie = JSON.parse(JSON.stringify(chart));
+
+            pie.type = "PieChart";
+            pie.options.title = "Distribution results per file";
+
+            var bars = JSON.parse(JSON.stringify(chart));
+
+            bars.type = "BarChart";
+            bars.rows = [];
+            bars.cols = [];
+            bars.options.title = "Results per file and check";
+            bars.options.hAxis.title = "Error count";
+            bars.options.vAxis.title = "Files";
+
+            var barrows = [];
+            var barcols = [
+                {
+                    "id": "file",
+                    "label": "File",
+                    "type": "string",
+                    "p": {}
+                }
+            ];
+            angular.forEach(data.checkstyleResults.checkstyle.file, function(value, key) { 
+                angular.forEach(value.error , function(error, key) { 
+                    var barcol = {
+                        "id": error.$.source,
+                        "label": error.$.source.split('.')[error.$.source.split('.').length -1],
+                        "type": "number",
+                        "p": {}
+                    }
+                    if(barcols.indexOf(barcol)){
+                        barcols.push(barcol);
+                    } 
+                });
+            });
+
+            angular.forEach(data.checkstyleResults.checkstyle.file, function(value, key) {  
+                var barrow = {
+                    "c": [
+                        {
+                            "v": value.$.name.split('/')[value.$.name.split('/').length -1]
+                        }
+                    ]
+                };
+                angular.forEach(barcols , function(barcol, key) { 
+                    if(key > 0) {
+                        this.c.push(
+                            {
+                                "v": $.grep(value.error, function(item){ return item.$.source == barcol.id}).length
+                            }
+                        );
+                    }
+                    
+
+                },barrow);
+
+
+                this.push(barrow);
+            }, barrows);
+
+            console.log(barcols);
+            console.log(barrows);
+
+            bars.data.cols = barcols;
+            bars.data.rows = barrows;
+            bars.cssStyle =  "height:" +barcols.length * 30 + "px; width:100%;",
+            console.log(bars);
+
+            $scope.bars = bars;
+            $scope.chart = chart;
+            $scope.pie = pie;
     });
 }
 

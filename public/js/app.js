@@ -1,7 +1,16 @@
 'use strict';
 
 // Declare app level module which depends on filters, and services
-angular.module('myJmv', ['myJmv.filters', 'myJmv.services', 'myJmv.directives','angularFileUpload', 'ui.bootstrap', 'schemaForm' , 'ngRoute']).
+angular.module('myJmv', [
+    'myJmv.filters', 
+    'myJmv.services', 
+    'myJmv.directives',
+    'angularFileUpload', 
+    'ui.bootstrap', 
+    'schemaForm' , 
+    'ngRoute',
+    'googlechart'
+  ]).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider.
       when('/', {
