@@ -128,3 +128,7 @@ li.L5, li.L6, li.L7, li.L8
 .navbar-inverse .navbar-brand {
     color: #fff;
 }
+fieldset {
+    margin-bottom: 30px;
+    margin-top: 10px;
+}

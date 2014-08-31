@@ -13,81 +13,174 @@ function ConfigCtrl($scope, $http, configService) {
     $scope.alerts = [];
 }
 function ConfigFormCtrl($scope, configService) {
-  /*var schema = {
-    type: "object",
-    properties: {}
-  };
-  configService.getCurrentConfig().then(function () {
-    var currentConfig = configService.currentConfig;
-
-    console.log(currentConfig);
-
-    angular.forEach(currentConfig.module.module, function(value, key) {
-      console.log(value)
-
-      this[value.$.name] = { 
-        type: "fieldset",
-        title: "Name",
-        items: [
-          { "severity": {"type": "string","title": "Name"}}
-         ]
-       };
-     }, schema.properties);
-  });
-
-
-*/
-  
-
-  
     $scope.schema = {
         type: "object",
-        properties: {
-            severity: { 
-                type: "string", 
-                /*titleMap:[
-                    { value: "error", name: "error" },
-                    { value: "warning", name: "warning" },
-                    { value: "info", name: "info" },
-                    { value: "ignore", name: "ignore" },
-                ],*/
-                enum: [
-                    "error",
-                    "warning",
-                    "info",
-                    "ignore",
-                ],
-                description: "Set to ignore to disable this check" },
-        }
+        properties: {}
     };
 
-    $scope.form = [
-        {
-            type: "fieldset",
-            title: "test",
-            items: [ 
-                {
-                    key: "severity",
-                    onChange: function(modelValue,form) {
-                        configService.currentConfig.module.module[0].property[4].$.value = modelValue;
-                    }
-                }
-            ]
-        }, 
-        {
-            type: "submit",
-            title: "Save"
-        }
-    ];
+    $scope.form = [];
+    $scope.model = {};
+    var scopeForm = [];
+
+    this.loadModel = function(forceReload) {
+        configService.getCurrentConfig(forceReload).then(function () {
+            var currentConfig = configService.currentConfig;
+            var scopeModel = {};
+            var schemaFields = {};
+
+            var handleModule = function(obj) {
+                angular.forEach(obj, function(value, key) { 
+
+                    var titleNode = $.grep(value.metadata, function(item){ 
+                        return item.$.name == "com.jmv.title"; 
+                    });
+                    var title = titleNode[0].$.value;
+                    var helpNode = $.grep(value.metadata, function(item){ 
+                        return item.$.name == "com.jmv.helptext"; 
+                    });
+                    var helptext = helpNode[0].$.value;
+                    var idNode = $.grep(value.metadata, function(item){ 
+                        return item.$.name == "com.jmv.identifier"; 
+                    });
+                    var id = idNode[0].$.value;
+
+                    var fieldset = {
+                        type: "fieldset",
+                        title: title,
+                        items: [
+                            {
+                                type: "help",
+                                helpvalue: "<p>" + helptext.replace("<![CDATA[", "").replace("]]>", "") + "</p>"
+                            }
+                        ]
+                    };
+
+                    angular.forEach(value.property, function(pNode, key) { 
+
+                        var propVal = (isNaN(pNode.$.value) ? pNode.$.value:  parseInt(pNode.$.value));
+                        console.log(id);
+
+                        scopeModel[id + pNode.$.name] = propVal;
+
+                        if(pNode.$.name == "format") {
+                            schemaFields[id + pNode.$.name] = {
+                                type: "string",
+                                fieldType: "string", 
+                            };
+                        }
+
+                        if(
+                            pNode.$.name == "minimum" 
+                            || pNode.$.name == "maximum" 
+                            || pNode.$.name == "methodMaximum" 
+                            || pNode.$.name == "classMaximum" 
+                            || pNode.$.name == "fileMaximum" 
+                            || pNode.$.name == "max") {
+                            schemaFields[id + pNode.$.name] = {
+                                type: "number", 
+                                fieldType: "number",
+                            };
+                        }
 
 
-    configService.getCurrentConfig().then(function () {
-        var currentConfig = configService.currentConfig;
+                        if(pNode.$.name == "message") {
+                            schemaFields[id + pNode.$.name] = {
+                                type: "string", 
+                                fieldType: "string",
+                            };
+                        }
 
-        $scope.model = {
-            severity : currentConfig.module.module[0].property[4].$.value
-        };
-    });
+                        if(pNode.$.name == "excludedClasses") {
+                            schemaFields[id + pNode.$.name] = {
+                                type: "string", 
+                                fieldType: "textarea",
+                                description: "User-configured class names to ignore"
+                            };
+                        }
+
+                        if(pNode.$.name == "severity") {
+                            schemaFields[id + pNode.$.name] = {
+                                type: "string",
+                                fieldType: "select",
+                                enum: [
+                                    "error",
+                                    "warning",
+                                    "info",
+                                    "ignore",
+                                ],
+                                description: "Set to ignore to disable this check"  
+                            };
+                        }
+
+                        if(pNode.$.name == "tokens") {
+                            schemaFields[id + pNode.$.name] = {
+                                type: "string",
+                                fieldType: "string",
+                                description: "subset of tokens LAND, BAND, LOR, BOR, BXOR"  
+                            };
+                        }
+
+                        var prop = {
+                            key: id + pNode.$.name,
+                            type: schemaFields[id + pNode.$.name].fieldType,
+                            title: pNode.$.name.charAt(0).toUpperCase() + pNode.$.name.slice(1),
+                            onChange: function(modelValue,form) {
+                                pNode.$.value = modelValue;
+                            }
+                        };
+                        this.push(prop);
+
+                    }, fieldset.items);
+                
+                    this.push(fieldset);
+                }, scopeForm);
+            };
+
+            var nonTreeWalkerModules = $.grep(currentConfig.module.module, function(item){ 
+                return item.$.name != "TreeWalker"; 
+            });
+
+            var treeWalkerModules = $.grep(currentConfig.module.module, function(item){ 
+                return item.$.name == "TreeWalker"; 
+            });
+
+            console.log(treeWalkerModules);
+
+            handleModule(treeWalkerModules[0].module);
+            handleModule(nonTreeWalkerModules);
+            
+
+            scopeForm.push({
+                type: "submit",
+                title: "Save"
+            });
+            scopeForm.push({   
+                type: 'button', 
+                style: 'btn-warning', 
+                title: 'Restore defaults', onClick: function(){
+                    configService.restoreRefaults().then(function (result) {
+                        $scope.$parent.alerts = [];
+                        if(result) {
+                            $scope.loadModel(true);
+                            $scope.$parent.alerts.push({msg: 'Configuration restored', type: 'success'});
+                        }else{
+                            $scope.$parent.alerts.push({msg: 'Error restoring configuration defaults', type: 'danger'});
+                        }
+                    });
+                } 
+            });
+
+            $scope.form = scopeForm;
+
+            $scope.schema.properties = schemaFields;
+            $scope.model = scopeModel;
+
+            console.log(scopeModel);       
+
+        });
+    };
+
+    this.loadModel(false);
 
     $scope.onSubmit = function(form) {
         // First we broadcast an event so all fields validate themselves
@@ -95,7 +188,6 @@ function ConfigFormCtrl($scope, configService) {
 
         // Then we check if the form is valid
         if (form.$valid) {
-            console.log(configService.currentConfig.module.module[0].property[4].$.value);
             configService.saveCurrentConfig().then(function (result) {
                 $scope.$parent.alerts = [];
                 if(result) {
@@ -107,7 +199,6 @@ function ConfigFormCtrl($scope, configService) {
         }
   }
 };
-
 
 
 function HeaderCtrl($scope, $location, lastResultService) {
@@ -141,8 +232,16 @@ function UploadCtrl($scope, $upload, $location, lastResultService) {
       }).success(function(data, status, headers, config) {
         // file is uploaded successfully
         console.log(data);
-        lastResultService.setLastResult(data.path);
-        $location.path("/results/" + data.path);
+
+        if(data.path) {
+            lastResultService.setLastResult(data.path);
+            $location.path("/results/" + data.path);
+        }else{
+            $scope.$parent.alerts = [];
+            $scope.$parent.alerts.push({msg: 'Error in analysis, please check config and source code.', type: 'danger' });
+        }
+
+        
       });
 
     }

@@ -22,7 +22,7 @@ router.get('/api', function(req, res) {
 });
 
 
-router.get('/defaults', function(req, res) {
+router.get('/api/defaults', function(req, res) {
     var cwd = process.cwd();
     var fs = require('fs-extra');
 
@@ -59,7 +59,7 @@ router.post('/api', function(req, res) {
         });
     })
 
-
+    
 
 });
 

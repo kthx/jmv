@@ -23,15 +23,15 @@ myJmvServices.service('lastResultService', function() {
 
 myJmvServices.service('configService', function($http, $q) {
     this.currentConfig = {};
-    this.getCurrentConfig = function() {
+    this.getCurrentConfig = function(forceReload) {
         var deferred = $q.defer();
         var self = this; 
 
-        if(Object.keys(self.currentConfig).length === 0) {
+        if(forceReload || Object.keys(self.currentConfig).length === 0) {
             console.log("getting config from server");
             $http.get('/config/api').
                 success(function(data, status, headers, config) {
-                    console.log("this is me:", self);
+                    console.log("this is me:", self, "and my data", data);
                     self.currentConfig = JSON.parse(data.data);
                     deferred.resolve();
                 });
@@ -41,6 +41,20 @@ myJmvServices.service('configService', function($http, $q) {
         return deferred.promise;
 
     };
+
+    this.restoreRefaults = function(){
+        var deferred = $q.defer();
+        var self = this;
+
+        $http.get('/config/api/defaults').
+            success(function(data, status, headers, config) {
+                deferred.resolve(true);
+            }).error(function (data, status, headers, config) {
+                deferred.resolve(false);
+        });
+        return deferred.promise;
+    };
+
     this.saveCurrentConfig = function(){
         var deferred = $q.defer();
         var self = this; 
@@ -60,6 +74,5 @@ myJmvServices.service('configService', function($http, $q) {
     this.setCurrentConfig = function(config) { 
         currentConfig = config;
     };
-
 
 });
