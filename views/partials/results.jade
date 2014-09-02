@@ -1,5 +1,3 @@
-h2 Analysis results:
-
 div(ng-controller="TabsCtrl")
     tabset(justified="true")
         tab(heading="Aggregated results") 
@@ -7,19 +5,21 @@ div(ng-controller="TabsCtrl")
             div(google-chart, chart="pie", style="{{pie.cssStyle}}")
             div(google-chart, chart="bars", style="{{bars.cssStyle}}")
         tab(heading="Single file results")
-            ul
-              li(data-ng-repeat="(id, value) in results.result") 
-                a(href="", scroll-to="{{(id).split('/').join('-').replace('.', '_')}}") {{id}}
-
-            div(data-ng-repeat="(id, value) in results.result") 
-                h3(id="{{(id).split('/').join('-').replace('.', '_')}}") {{id}}
-                div(class="generalErrors-{{(id).split('/').join('-').replace('.', '_')}}")
-                    h4 Statistics
-                    |Error count: 
-                    span.ErrorCount 0
-                    h4 General errors
-                    ul.GeneralErrors
-                        li.none none
-                pre(class="prettyprint")
-                   code(class="language-java") 
-                       | {{(value.source).join('\n')}}
+            .col-md-3
+                ul(class="nav nav-stacked sidebar affix")
+                  li(data-ng-repeat="(id, value) in results.result") 
+                    a(href="", class="", scroll-to="{{(id).split('/').join('-').replace('.', '_')}}") {{(id).split('/')[(id).split('/').length -1]}}
+            .col-md-9
+                h2 Analysis results:
+                div(data-ng-repeat="(id, value) in results.result") 
+                    h3(class="fileTitle", id="{{(id).split('/').join('-').replace('.', '_')}}") {{id}}
+                    div(class="generalErrors-{{(id).split('/').join('-').replace('.', '_')}}")
+                        h4 Statistics
+                        |Error count: 
+                        span.ErrorCount 0
+                        h4 General errors
+                        ul.GeneralErrors
+                            li.none none
+                    pre(class="prettyprint")
+                       code(class="language-java") 
+                           | {{(value.source).join('\n')}}

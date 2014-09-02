@@ -130,6 +130,54 @@ li.L5, li.L6, li.L7, li.L8
 }
 fieldset {
     margin-bottom: 30px;
-    margin-top: 10px;
+    padding-top: 10px;
 }
+
 body    {overflow-y:scroll;}
+.nav.sidebar>li>a {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+body>.navbar {width: 100%;
+border-radius: 0;
+}
+.main {
+    padding-top: 60px;
+}
+.nav-tabs.nav-justified {
+    position: fixed;
+    height: 60px;
+    top: 51px;
+    margin: 0 auto;
+    padding-bottom: 60px;
+    position: fixed;
+    right: 0;
+    left: 0;
+    z-index: 1030;
+    display: block;
+    width: 1140px;
+    background-color: #fff
+}
+.tab-content {
+    padding-top: 60px;
+    clear: both;
+}
+legend {
+    padding-top:60px
+
+}
+.nav-tabs.nav-justified>li>a, .nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus, .nav-tabs.nav-justified>li {
+    font-size: 22px;
+    border-radius: 0;
+    cursor: pointer;
+}
+@media (min-width: 768px) {
+    .nav-tabs.nav-justified>li>a, .nav-tabs>li.active>a, .nav-tabs>li.active>a:hover, .nav-tabs>li.active>a:focus, .nav-tabs.nav-justified>li {
+        font-size: 22px;
+        border-radius: 0;
+        cursor:pointer;
+    }
+}
+.fileTitle {
+    padding-top: 125px;
+}

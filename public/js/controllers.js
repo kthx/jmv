@@ -12,7 +12,7 @@ function IndexCtrl($scope, $http) {
 function ConfigCtrl($scope, $http, configService) {
     $scope.alerts = [];
 }
-function ConfigFormCtrl($scope, configService) {
+function ConfigFormCtrl($scope, configService, $filter,  $anchorScroll) {
     $scope.schema = {
         type: "object",
         properties: {}
@@ -46,6 +46,7 @@ function ConfigFormCtrl($scope, configService) {
 
                     var fieldset = {
                         type: "fieldset",
+                        id: title.replace(" check", ""),
                         title: title,
                         items: [
                             {
@@ -218,6 +219,7 @@ function ConfigFormCtrl($scope, configService) {
                         }else{
                             $scope.$parent.alerts.push({msg: 'Error restoring configuration defaults', type: 'danger'});
                         }
+                        $anchorScroll();
                     });
                 } 
             });
@@ -227,7 +229,7 @@ function ConfigFormCtrl($scope, configService) {
             $scope.schema.properties = schemaFields;
             $scope.model = scopeModel;
 
-            console.log(scopeModel);       
+            console.log("form: ",scopeForm);       
 
         });
     };
@@ -248,6 +250,7 @@ function ConfigFormCtrl($scope, configService) {
                 }else{
                     $scope.$parent.alerts.push({msg: 'Error saving configuration', type: 'danger'});
                 }
+                $anchorScroll();
             });
         }
   }

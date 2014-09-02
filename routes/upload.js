@@ -5,8 +5,7 @@ var exec = require('child_process').exec
 var fs = require('fs');
 var unzip = require('unzip');
 
-var randomString = function (len, bits)
-{
+var randomString = function (len, bits){
     bits = bits || 36;
     var outStr = "", newStr;
     while (outStr.length < len)
@@ -17,54 +16,40 @@ var randomString = function (len, bits)
     return outStr.toUpperCase();
 };
 
+
 router.post("/", function(req, res) {    
 	var currentFolder = randomString(12);
 	var cwd = process.cwd();
 	if(req.files) {
-
 		mkdirp('./results/' + currentFolder + '/files/', function(err) {   
 			fs.rename(req.files.file.path, './results/' + currentFolder + '/files/' + req.files.file.originalname, function(){
 				mkdirp('./results/' + currentFolder + '/checkstyle/', function(err) {  
+                    var executeCheckStyle = function() {
+                        exec('/usr/bin/checkstyle -c ' + cwd + '/config/checkstyle_config.xml -f xml -o ' 
+                            + cwd + '/results/' + currentFolder + '/checkstyle/output.xml  \-r ' 
+                            + cwd + '/results/' + currentFolder + '/files/', function (error, stdout, stderr) {
+                                if(stderr && stdout) {
+                                    res.json({ path: '', error: stderr}); 
+                                    res.end();
+                                }
+
+                                res.json({ path: currentFolder });
+                                res.end();     
+                        });
+                    };
+
 					if(req.files.file.extension === 'zip') {
 						fs.createReadStream('./results/' + currentFolder + '/files/' + req.files.file.originalname)
 						.pipe(unzip.Extract({ path: './results/' + currentFolder + '/files/'  }))
 						.on('finish', function(){
 							fs.unlink('./results/' + currentFolder + '/files/' + req.files.file.originalname, function (err) {
 								if (err) throw err;
-							  	console.log('successfully deleted ./results/' + currentFolder + '/files/' + req.files.file.originalname);
-							  	exec('/usr/bin/checkstyle -c ' + cwd + '/config/checkstyle_config.xml -f xml -o ' 
-									+ cwd + '/results/' + currentFolder + '/checkstyle/output.xml  \-r ' 
-									+ cwd + '/results/' + currentFolder + '/files/', function (error, stdout, stderr) {
-										console.log("stdout:", stdout);
-                                        console.log("stderr:", stderr);
-				  						
-                                        if(stderr && stdout) {
-                                            res.json({ path: '', error: stderr}); 
-                                            res.end();
-                                        }
-
-							  			res.json({ path: currentFolder }); 
-							  			res.end();
-								});
+							  	executeCheckStyle()
 							});
 							
 						});
 					} else{
-						exec('/usr/bin/checkstyle -c ' + cwd + '/config/checkstyle_config.xml -f xml -o ' 
-							+ cwd + '/results/' + currentFolder + '/checkstyle/output.xml  \-r ' 
-							+ cwd + '/results/' + currentFolder + '/files/', function (error, stdout, stderr) {
-
-					  			console.log("stdout:", stdout);
-					  			console.log("stderr:", stderr);
-
-                                if(stderr && stdout) {
-                                    res.json({ path: '', error: stderr}); 
-                                    res.end();
-                                }
-
-					  			res.json({ path: currentFolder });
-					  			res.end();     
-						});
+						executeCheckStyle();
 					}
 					
 				});

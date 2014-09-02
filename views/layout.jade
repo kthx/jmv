@@ -9,23 +9,26 @@ html(ng-app="myJmv")
     link(rel='stylesheet', href='/css/style.css')
     
   body
-    .navbar.navbar-inverse
-        .container
-            .navbar-header
-                .navbar-brand.active JMV
-            .collapse.navbar-collapse(ng-controller="HeaderCtrl")
-                ul.nav.navbar-nav
-                    li( ng-class="{ active: isActive('/')}")
-                        a(href='/') Upload Java source-code
-                    li( ng-class="{ active: isActive('/results')}", class="{{disableIfNoLatestResult()}}")
-                        a(href='/results/{{resultPath()}}') Latest results
-                    li( ng-class="{ active: isActive('/config')}")
-                        a(href='/config') Configuration
-                    li( ng-class="{ active: isActive('/about')}")
-                        a(href='/about') About
+    .row
+        .navbar.navbar-inverse.navbar-fixed-top
+            .container
+                .navbar-header
+                    .navbar-brand.active JMV
+                .collapse.navbar-collapse(ng-controller="HeaderCtrl")
+                    ul.nav.navbar-nav
+                        li( ng-class="{ active: isActive('/')}")
+                            a(href='/') Upload Java source-code
+                        li( ng-class="{ active: isActive('/results')}", class="{{disableIfNoLatestResult()}}")
+                            a(href='/results/{{resultPath()}}') Latest results
+                        li( ng-class="{ active: isActive('/config')}")
+                            a(href='/config') Configuration
+                        li( ng-class="{ active: isActive('/about')}")
+                            a(href='/about') About
 
-    .container
-      block content
+    .container.main
+        .row
+            block content
+      
     script(src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js')
     script(src='js/bootstrap.min.js')
 

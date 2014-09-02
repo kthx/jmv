@@ -7,7 +7,8 @@ angular.module('myJmv.directives', []).
     return function(scope, elm, attrs) {
       elm.text(version);
     };
-  }]).directive('prettyprint', function($timeout) {
+  }])
+  .directive('prettyprint', function($timeout) {
     return {
         restrict: 'C',
         scope: false,
@@ -62,5 +63,16 @@ angular.module('myJmv.directives', []).
             $anchorScroll();
         });
 
+    };
+})
+.directive('legend', function($timeout) {
+    return {
+        restrict: 'E',
+        scope: false,
+        link: function postLink(scope, element, attrs) {
+            $timeout(function () {
+                $(element).attr('id', $(element).html().replace(' ', ''));
+            });
+        }
     };
 });
