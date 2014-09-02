@@ -13,24 +13,24 @@ angular.module('myJmv', [
   ]).
   config(['$routeProvider', '$locationProvider', function($routeProvider, $locationProvider) {
     $routeProvider.
-      when('/', {
-        templateUrl: 'partials/index',
-        controller: IndexCtrl
-      }).
-      when('/config', {
-        templateUrl: 'partials/config',
-        controller: ConfigCtrl
-      }).
-      when('/upload', {
-        templateUrl: '/upload',
-        controller: UploadCtrl
-      }).
-      when('/results/:id', {
-        templateUrl: 'partials/results',
-        controller: ResultsCtrl
-      }).
-      otherwise({
-        redirectTo: '/'
-      });
+        when('/', {
+            templateUrl: 'partials/index',
+            controller: IndexCtrl
+        }).
+        when('/config', {
+            templateUrl: 'partials/config',
+            controller: ConfigCtrl
+        }).
+            when('/upload', {
+            templateUrl: '/upload',
+            controller: UploadCtrl
+        }).
+            when('/results/:id', {
+            templateUrl: 'partials/results',
+            controller: ResultsCtrl
+        }).
+            otherwise({
+            redirectTo: '/'
+        });
     $locationProvider.html5Mode(true);
   }]);

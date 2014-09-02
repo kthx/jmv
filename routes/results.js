@@ -28,16 +28,11 @@ router.get('/api/:resultId', function(req, res) {
                 parser.parseString(data, function (err, checkstyleResults) {
                     checkstyleResults.checkstyle.file.forEach(function(item, index, array){
                         if(item.$.name.endsWith('.java')) {
-                            console.log(item.$.name);
                             results[item.$.name.replace(cwd + '/results/' + resultId + '/files/', '')] = {};
                             results[item.$.name.replace(cwd + '/results/' + resultId + '/files/', '')].source = [];
-
                             lineReader.eachLine(item.$.name, function(line, last) {
-                                console.log(line);
                                 results[item.$.name.replace(cwd + '/results/' + resultId + '/files/', '')].source.push(line);
                                 if(last && (index === array.length - 1)){
-                                    console.dir(results);
-                                    console.log('Done');
                                     res.json({ 
                                         currentUrl: '/results/' + resultId,
                                         title: 'JVM Results', 

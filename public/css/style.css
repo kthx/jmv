@@ -4,7 +4,7 @@
     color: #EC7600;
 }
 .kwd
-{
+{ 
     color: #93C763;
 }
 .com
@@ -47,7 +47,7 @@ pre.prettyprint
 {
     border: 0px solid #888;
 }
-ol.linenums
+ol.linenums 
 {
     margin-top: 0;
     margin-bottom: 0;
