@@ -2,7 +2,7 @@
 
 /* Controllers */
 
-function IndexCtrl($scope, $http) {
+function IndexCtrl($scope, $http) {  
     $http.get('/').
         success(function(data, status, headers, config) {
             $scope.title = "JVM";

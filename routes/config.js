@@ -1,16 +1,15 @@
 var express = require('express');
 var router = express.Router();
 var fs = require('fs');
-var xml2js = require('xml2js');
-
+var xml2js = require('xml2js'); 
+ 
 router.get('/', function(req, res) {
     res.render('index');
-});
+});   
 
-router.get('/api', function(req, res) {
+router.get('/api', function(req, res) { 
     var parser = new xml2js.Parser();
     var cwd = process.cwd();
-    
     fs.readFile( cwd + '/config/checkstyle_config.xml', function(err, data) {
         parser.parseString(data, function (err, configContent) {
             var config = configContent;
@@ -19,16 +18,18 @@ router.get('/api', function(req, res) {
             });
         });
     });
-});
+}); 
 
 
 router.get('/api/defaults', function(req, res) {
+
     var cwd = process.cwd();
     var fs = require('fs-extra');
 
     fs.copy(cwd + '/config/defaults.xml', cwd + '/config/checkstyle_config.xml', function(err){
         res.json({
-            success: !err
+            success: !err,
+            message: err
         });
     });
 });

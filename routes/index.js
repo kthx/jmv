@@ -1,9 +1,11 @@
 var express = require('express');
 var router = express.Router();
-
+  
 /* GET home page. */
 router.get('/', function(req, res) {
-  res.render('index', { title: 'JMV' });
-});
+
+    console.log("I'm in you route");
+    res.render('index', { title: 'JMV'  }); 
+});  
 
 module.exports = router;

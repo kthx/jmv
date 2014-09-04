@@ -1,9 +1,9 @@
 var should = require("should")
-    , router = require("../..routes/index");
+    , router = require("../../routes/index");
 
 var request = {};
 var response = {
-    viewName: ""
+    viewName: "" 
     , data : {}
     , render: function(view, viewData) {
         this.viewName = view;
