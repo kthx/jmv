@@ -29,11 +29,10 @@ router.post("/", function(req, res) {
                             + cwd + '/results/' + currentFolder + '/checkstyle/output.xml  \-r ' 
                             + cwd + '/results/' + currentFolder + '/files/', function (error, stdout, stderr) {
                                 if(stderr && stdout) {
-                                    res.json({ path: '', error: stderr}); 
+                                    res.json({ path: '', error: stderr, success: false}); 
                                     res.end();
                                 }
-
-                                res.json({ path: currentFolder });
+                                res.json({ path: currentFolder, success: true });
                                 res.end();     
                         });
                     };

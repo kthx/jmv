@@ -22,20 +22,24 @@ router.get('/api/:resultId', function(req, res) {
 	var parser = new xml2js.Parser();
 	var results = {};
     var cwd = process.cwd();
-    fs.exists(cwd+ '/results/' + resultId + '/checkstyle/output.xml', function(exists) {
+    
+    var configPath = cwd+ '/results/' + resultId + '/checkstyle/output.xml'
+    var filesPath = cwd + '/results/' + resultId + '/files/';
+    
+    fs.exists(configPath, function(exists) {
         if (exists) {
-            fs.readFile( cwd+ '/results/' + resultId + '/checkstyle/output.xml', function(err, data) {
+            fs.readFile(configPath, function(err, data) {
                 parser.parseString(data, function (err, checkstyleResults) {
                     checkstyleResults.checkstyle.file.forEach(function(item, index, array){
                         if(item.$.name.endsWith('.java')) {
-                            results[item.$.name.replace(cwd + '/results/' + resultId + '/files/', '')] = {};
-                            results[item.$.name.replace(cwd + '/results/' + resultId + '/files/', '')].source = [];
+                            results[item.$.name.replace(filesPath, '')] = {};
+                            results[item.$.name.replace(filesPath, '')].source = [];
                             lineReader.eachLine(item.$.name, function(line, last) {
-                                results[item.$.name.replace(cwd + '/results/' + resultId + '/files/', '')].source.push(line);
+                                results[item.$.name.replace(filesPath, '')].source.push(line);
                                 if(last && (index === array.length - 1)){
                                     res.json({ 
                                         currentUrl: '/results/' + resultId,
-                                        title: 'JVM Results', 
+                                        title: 'JMV Results', 
                                         result: results, 
                                         checkstyleResults: checkstyleResults, 
 
@@ -48,7 +52,8 @@ router.get('/api/:resultId', function(req, res) {
             });
         } else {
             res.json({ 
-                error: 'ResultNotFound'
+                error: 'ResultNotFound',
+                config: configPath
             });
         }
     });

@@ -48,8 +48,6 @@ router.post('/api', function(req, res) {
         }
     });
 
-    console.log(req.body);
-
     var xml = builder.buildObject(req.body);
 
     var cwd = process.cwd();

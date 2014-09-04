@@ -1,8 +1,8 @@
 .jumbotron
-    h2 Welcome to JVM
+    h2 Welcome to JMV
     div.alerts
         alert(ng-repeat="alert in alerts" type="{{alert.type}}") {{alert.msg}}
-    div(ng-controller="UploadCtrl")
+    div(ng-controller="UploadCtrl" class="uploadForm")
         div(class="btn btn-success btn-lg", ng-file-select="onFileSelect($files)",data-multiple="true")
             span(class="glyphicon glyphicon-plus").
             | Upload .zip or .java

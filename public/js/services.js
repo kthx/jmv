@@ -28,15 +28,16 @@ myJmvServices.service('configService', function($http, $q) {
         var self = this; 
 
         if(forceReload || Object.keys(self.currentConfig).length === 0) {
-            console.log("getting config from server");
             $http.get('/config/api').
                 success(function(data, status, headers, config) {
-                    console.log("this is me:", self, "and my data", data);
                     self.currentConfig = JSON.parse(data.data);
-                    deferred.resolve();
+                    deferred.resolve(true);
+                }).
+                error(function (data, status, headers, config) {
+                    deferred.resolve(false);
                 });
         }else{
-            deferred.resolve();
+            deferred.resolve(true);
         }
         return deferred.promise;
 
