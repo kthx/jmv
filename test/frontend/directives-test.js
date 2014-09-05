@@ -90,11 +90,7 @@ describe('myJmv directives', function() {
         var $anchorScroll = jasmine.createSpy('anchorScroll');
         beforeEach(inject(function($rootScope, $compile, $location, $anchorScroll) {
             scope = $rootScope.$new();
-            
             element = '<a href="" class="" scroll-to="test">test</a><br id="test" />';
-            
-
-
             element = $compile(element)(scope);
             scope.$digest();
         }));
@@ -109,21 +105,14 @@ describe('myJmv directives', function() {
     describe('legend directive', function() {
         beforeEach(inject(function($rootScope, $compile, $location, $timeout) {
             scope = $rootScope.$new();
-            
             element = '<legend>test</legend>';
-            
-
-
             element = $compile(element)(scope);
             scope.$digest();
             $timeout.flush();
         }));
 
         it('legend gets id set from text' , function(){
-            console.log(element);
             expect($(element).attr('id') == "test").toBe(true);
-            
-            
         });
     });
 

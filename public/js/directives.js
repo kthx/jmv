@@ -3,13 +3,13 @@
 /* Directives */
 
 angular.module('myJmv.directives', []).
-  directive('appVersion', ['version', function(version) {
-    return function(scope, elm, attrs) {
-      elm.text(version);
-    };
-  }])
-  .directive('prettyprint', function($timeout) {
-    return {
+    directive('appVersion', ['version', function(version) {
+        return function(scope, elm, attrs) {
+            elm.text(version);
+        };
+    }])
+    .directive('prettyprint', function($timeout) {
+        return {
         restrict: 'C',
         scope: false,
         link: function postLink(scope, element, attrs) {
@@ -47,31 +47,31 @@ angular.module('myJmv.directives', []).
 
             });
         }
-    };
-}).directive('scrollTo', function ($location, $anchorScroll) {
-    return function(scope, element, attrs) {
-
-        element.bind('click', function(event) {
-            event.stopPropagation();
-            var off = scope.$on('$locationChangeStart', function(ev) {
-                off();
-                ev.preventDefault();
+        };
+    })
+    .directive('scrollTo', function ($location, $anchorScroll) {
+        return function(scope, element, attrs) {
+            element.bind('click', function(event) {
+                event.stopPropagation();
+                var off = scope.$on('$locationChangeStart', function(ev) {
+                    off();
+                    ev.preventDefault();
+                });
+                var location = attrs.scrollTo;
+                $location.hash(location);
+                $anchorScroll();
             });
-            var location = attrs.scrollTo;
-            $location.hash(location);
-            $anchorScroll();
-        });
 
-    };
-})
-.directive('legend', function($timeout) {
-    return {
-        restrict: 'E',
-        scope: false,
-        link: function postLink(scope, element, attrs) {
-            $timeout(function () {
-                $(element).attr('id', $(element).html().replace(' ', ''));
-            });
-        }
-    };
-});
+        };
+    })
+    .directive('legend', function($timeout) {
+        return {
+            restrict: 'E',
+            scope: false,
+            link: function postLink(scope, element, attrs) {
+                $timeout(function () {
+                    $(element).attr('id', $(element).html().replace(' ', ''));
+                });
+            }
+        };
+    });

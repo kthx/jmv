@@ -25,7 +25,6 @@ function ConfigFormCtrl($scope, configService, $anchorScroll) {
 
         configService.getCurrentConfig(forceReload).then(function () {
             var currentConfig = configService.currentConfig;
-            console.log(currentConfig);
             var scopeModel = {};
             var schemaFields = {};
 
@@ -199,8 +198,6 @@ function ConfigFormCtrl($scope, configService, $anchorScroll) {
                 return item.$.name == "TreeWalker"; 
             });
 
-            console.log(treeWalkerModules);
-
             handleModule(treeWalkerModules[0].module);
             handleModule(nonTreeWalkerModules);
             
@@ -304,8 +301,6 @@ function ResultsCtrl($scope, $http, $routeParams, $window, lastResultService) {
     $http.get('/results/api/' + $routeParams.id).
 
         success(function(data) {
-
-            console.log(data.checkstyleResults.checkstyle);
             lastResultService.setLastResult($routeParams.id);
             $scope.currentUrl = data.currentUrl;
             $scope.results = data;
@@ -444,13 +439,10 @@ function ResultsCtrl($scope, $http, $routeParams, $window, lastResultService) {
                 this.push(barrow);
             }, barrows);
 
-            console.log(barcols);
-            console.log(barrows);
 
             bars.data.cols = barcols;
             bars.data.rows = barrows;
             bars.cssStyle =  "height:" +barcols.length * 30 + "px; width:100%;",
-            console.log(bars);
 
             $scope.bars = bars;
             $scope.chart = chart;
