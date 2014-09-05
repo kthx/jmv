@@ -34,7 +34,7 @@ module.exports = function(grunt) {
               timeout: 50000,
               ignoreLeaks: false,
               ui: 'bdd',
-              reporter: 'tap'
+              reporter: 'spec'
             },
 
             all: { src: ['../test/backend/*.js'] }

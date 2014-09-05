@@ -300,8 +300,12 @@ function UploadCtrl($scope, $upload, $location, lastResultService) {
 };
 
 function ResultsCtrl($scope, $http, $routeParams, $window, lastResultService) {
+
     $http.get('/results/api/' + $routeParams.id).
+
         success(function(data) {
+
+            console.log(data.checkstyleResults.checkstyle);
             lastResultService.setLastResult($routeParams.id);
             $scope.currentUrl = data.currentUrl;
             $scope.results = data;
