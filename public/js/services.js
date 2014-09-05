@@ -73,7 +73,8 @@ myJmvServices.service('configService', function($http, $q) {
         return deferred.promise;
     };
     this.setCurrentConfig = function(config) { 
-        currentConfig = config;
+        var self = this; 
+        self.currentConfig = config;
     };
 
 });

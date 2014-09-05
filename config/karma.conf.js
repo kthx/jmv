@@ -1,22 +1,31 @@
 module.exports = function(config){
     config.set({
     basePath : '../',
-    reporters: ['dots','progress'],
+    reporters: ['story'],
     colors: true,
-
-    files : [
-        'public/bower_components/angular/angular.js',
-        'public/bower_components/angular-mocks/angular-mocks.js',
-        'public/js/app.js',
-        'public/js/services.js',
-        "test/frontend/controller-test.js"
-    ],
     autoWatch : false,
     frameworks: ['jasmine'],
-
     browsers : ['Chrome'],
+    files : [
+        'public/bower_components/jquery/dist/jquery.min.js',
+        'public/bower_components/angular/angular.js',
+        'public/bower_components/angular-mocks/angular-mocks.js',
+        'public/js/lib/angular/angular-file-upload.js',
+        'https://raw.githubusercontent.com/velesin/jasmine-jquery/master/lib/jasmine-jquery.js',
+        'public/js/prettify.js',
+        'public/js/app.js',
+        'public/js/services.js',
+        'public/js/filters.js',
+        'public/js/directives.js',
+        'public/js/controllers.js',
+        'test/frontend/*-test.js'
+    ],
+
+
+
     plugins : [
-            'karma-jasmine',
-            'karma-chrome-launcher'            
-            ],
+        'karma-jasmine',
+        'karma-chrome-launcher', 
+        'karma-story-reporter'      
+    ]
 })}

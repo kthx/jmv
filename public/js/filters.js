@@ -2,13 +2,10 @@
 
 /* Filters */
 
-angular.module('myJmv.filters', []).
-  filter('interpolate', ['version', function(version) {
-    return function(text) {
-      return String(text).replace(/\%VERSION\%/mg, version);
-    }
-  }]).
-  filter('onlyfieldsets', function(){
+var myJmvFilters = angular.module('myJmv.filters', []).
+  value('version', '0.1');
+
+myJmvFilters.filter('onlyfieldsets', function(){
     return function(items) {
         var filtered = [];
         angular.forEach(items, function(item) {
@@ -18,14 +15,4 @@ angular.module('myJmv.filters', []).
         },filtered);
         return filtered;
     };
-
-  }).
-  filter('array', function() {
-  return function(items) {
-    var filtered = [];
-    angular.forEach(items, function(item) {
-      filtered.push(item);
-    });
-   return filtered;
-  };
-});;
+});

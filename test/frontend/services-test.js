@@ -20,7 +20,7 @@ describe('myJmv services', function() {
         it('getCurrentConfig loads the config into the service and returns true', function() {
             httpBackend.whenGET("/config/api").respond({
                     data: JSON.stringify({ key: 'findMe'})
-            });
+            }); 
 
             configService.getCurrentConfig().then(function(result) {
                 expect(result).toEqual(true);
@@ -28,7 +28,7 @@ describe('myJmv services', function() {
                     JSON.stringify(configService.currentConfig) 
                     == JSON.stringify({ key: 'findMe'})).toEqual(true);
             });
-            httpBackend.flush();
+            httpBackend.flush(); 
         });
         it('getCurrentConfig returns false on error', function() {
             httpBackend.whenGET("/config/api").respond(500, 'error'); 
@@ -40,6 +40,52 @@ describe('myJmv services', function() {
                     == JSON.stringify({})).toEqual(true);
             });
             httpBackend.flush();
+        });
+
+        it('restoreRefaults returns true on success', function() {
+            httpBackend.whenGET("/config/api/defaults").respond(200, "ok");
+
+            configService.restoreRefaults().then(function(result) {
+                expect(result).toEqual(true);
+            });
+            httpBackend.flush();
+        });
+        it('restoreRefaults returns false on error', function() {
+            httpBackend.whenGET("/config/api/defaults").respond(500, 'error'); 
+
+            configService.restoreRefaults().then(function(result) {
+                expect(result).toEqual(false);
+            });
+            httpBackend.flush();
+        });
+
+        it('saveCurrentConfig returns true on success', function() {
+            httpBackend.whenPOST("/config/api").respond(200, "ok");
+
+            configService.saveCurrentConfig().then(function(result) {
+                expect(result).toEqual(true);
+            });
+            httpBackend.flush();
+        });
+        it('saveCurrentConfig returns false on error', function() {
+            httpBackend.whenPOST("/config/api").respond(500, 'error'); 
+
+            configService.saveCurrentConfig().then(function(result) {
+                expect(result).toEqual(false);
+            });
+            httpBackend.flush();
+        });
+        it('can set and get config', function() {
+            httpBackend.whenGET("/config/api").respond({
+                    data: JSON.stringify({ key: 'FindMeLater'})
+            });
+            configService.setCurrentConfig({key:"FindMeLater"});
+            configService.getCurrentConfig();
+            expect(
+                    JSON.stringify(configService.currentConfig) 
+                    == JSON.stringify({key:"FindMeLater"})
+            ).toEqual(true);
+           
         });
     });
 });

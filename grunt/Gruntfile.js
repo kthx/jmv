@@ -13,10 +13,10 @@ module.exports = function(grunt) {
                 files: ['../public/js/*.js', '../test/frontend/*.js'],
                 tasks: ['karma:unit:run']
             },
-            frontendjs: {
+           /* frontendjs: {
                 files: ['../public/js/*.js','!../public/js/jmv.min.js'],
                 tasks: ['uglify']
-            },
+            },*/
             backendjs: {
                 files: ['../routes/*.js','../app.js', '../test/backend/*.js'],
                 tasks: ['simplemocha']
@@ -90,6 +90,7 @@ module.exports = function(grunt) {
             }
         }
     });
+
 
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-uglify');

@@ -1,7 +1,7 @@
 div(ng-controller="ConfigFormCtrl")
     .col-md-3
         ul(class="nav nav-stacked sidebar affix")
-          li(data-ng-repeat="fieldset in form|array|onlyfieldsets") 
+          li(data-ng-repeat="fieldset in form|onlyfieldsets") 
             a(href="", class="", scroll-to="{{(fieldset.title).replace(' ', '')}}") {{(fieldset.title)}}    
     div(class="col-md-9")
         .innerWrapper

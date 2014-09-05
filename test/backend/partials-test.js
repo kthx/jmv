@@ -11,7 +11,7 @@ describe('partial routes', function () {
             .end(function (err, res) {
                 (res.text.indexOf('uploadForm') > -1).should.be.true;
                 done();
-            })
+            }) 
     });
 
     it('config partial returns configForm', function (done) {

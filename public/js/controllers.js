@@ -5,30 +5,32 @@
 function IndexCtrl($scope, $http) {  
     $http.get('/').
         success(function(data, status, headers, config) {
-            $scope.title = "JVM";
+            $scope.title = "JMV";
             $scope.alerts = [];
         });
 }
-function ConfigCtrl($scope, $http, configService) {
+function ConfigCtrl($scope, $http) {
     $scope.alerts = [];
 }
-function ConfigFormCtrl($scope, configService, $filter,  $anchorScroll) {
+function ConfigFormCtrl($scope, configService, $anchorScroll) {
     $scope.schema = {
         type: "object",
         properties: {}
     };
-
     $scope.form = [];
     $scope.model = {};
     var scopeForm = [];
 
     this.loadModel = function(forceReload) {
+
         configService.getCurrentConfig(forceReload).then(function () {
             var currentConfig = configService.currentConfig;
+            console.log(currentConfig);
             var scopeModel = {};
             var schemaFields = {};
 
             var handleModule = function(obj) {
+
                 angular.forEach(obj, function(value, key) { 
 
                     var titleNode = $.grep(value.metadata, function(item){ 
@@ -227,9 +229,7 @@ function ConfigFormCtrl($scope, configService, $filter,  $anchorScroll) {
             $scope.form = scopeForm;
 
             $scope.schema.properties = schemaFields;
-            $scope.model = scopeModel;
-
-            console.log("form: ",scopeForm);       
+            $scope.model = scopeModel;     
 
         });
     };
@@ -269,39 +269,31 @@ function HeaderCtrl($scope, $location, lastResultService) {
     };
 }
 
-var TabsCtrl = function ($scope) {
-
-};
 function UploadCtrl($scope, $upload, $location, lastResultService) {
-  $scope.onFileSelect = function($files) {
-
-    
-    $scope.$parent.alerts.push({msg: 'Analysis in progress, please wait'});
-
-    //$files: an array of files selected, each file has name, size, and type.
-    for (var i = 0; i < $files.length; i++) {
-      var file = $files[i];
-      $scope.upload = $upload.upload({
-        url: '/upload', 
-        method: 'POST',
-        data: {myObj: $scope.myModelObj},
-        file: file,
-      }).progress(function(evt) {
-        console.log('percent: ' + parseInt(100.0 * evt.loaded / evt.total));
-      }).success(function(data, status, headers, config) {
-        // file is uploaded successfully
-        console.log(data);
-
-        if(data.path) {
-            lastResultService.setLastResult(data.path);
-            $location.path("/results/" + data.path);
-        }else{
-            $scope.$parent.alerts = [];
-            $scope.$parent.alerts.push({msg: 'Error in analysis, please check config and source code.', type: 'danger' });
+    $scope.$parent.alerts = [];
+    $scope.onFileSelect = function($files) {
+        $scope.$parent.alerts.push({msg: 'Analysis in progress, please wait'});
+        if($files.length == 0) {
+            $scope.$parent.alerts = []; 
+            $scope.$parent.alerts.push({msg: 'Error in file upload', type: 'danger' });
+            return false;
         }
-
-        
-      });
+        for (var i = 0; i < $files.length; i++) {
+            var file = $files[i];
+            $scope.upload = $upload.upload({
+                url: '/upload', 
+                method: 'POST',
+                data: {myObj: $scope.myModelObj},
+                file: file,
+            }).success(function(data, status, headers, config) {
+                if(data.path) {
+                    lastResultService.setLastResult(data.path);
+                    $location.path("/results/" + data.path);
+                }else{
+                    $scope.$parent.alerts = [];
+                    $scope.$parent.alerts.push({msg: 'Error in analysis, please check config and source code.', type: 'danger' });
+                }
+            });
 
     }
   };
