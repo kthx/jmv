@@ -9,14 +9,14 @@ module.exports = function(grunt) {
                 files: '../public/css/style.css',
                 tasks: ['cssmin']
             },
+            frontendjs: {
+                files: ['../public/js/*.js','!../public/js/jmv.min.js'],
+                tasks: ['uglify']
+            },
             karma: {
                 files: ['../public/js/*.js', '../test/frontend/*.js'],
                 tasks: ['karma:unit:run']
-            },
-           /* frontendjs: {
-                files: ['../public/js/*.js','!../public/js/jmv.min.js'],
-                tasks: ['uglify']
-            },*/
+            },            
             backendjs: {
                 files: ['../routes/*.js','../app.js', '../test/backend/*.js'],
                 tasks: ['simplemocha']

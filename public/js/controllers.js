@@ -3,26 +3,25 @@
 /* Controllers */
 
 function IndexCtrl($scope, $http) {  
-    $http.get('/').
-        success(function(data, status, headers, config) {
-            $scope.title = "JMV";
-            $scope.alerts = [];
-        });
-}
+    $scope.title = "JMV";
+    $scope.alerts = [];
+};
+
 function ConfigCtrl($scope, $http) {
     $scope.alerts = [];
-}
+};
+
 function ConfigFormCtrl($scope, configService, $anchorScroll) {
     $scope.schema = {
         type: "object",
         properties: {}
     };
-    $scope.form = [];
-    $scope.model = {};
-    var scopeForm = [];
+    
 
-    this.loadModel = function(forceReload) {
-
+    var loadModel = function(forceReload) {
+        $scope.form = [];
+        $scope.model = {};
+        var scopeForm = [];
         configService.getCurrentConfig(forceReload).then(function () {
             var currentConfig = configService.currentConfig;
             var scopeModel = {};
@@ -52,7 +51,7 @@ function ConfigFormCtrl($scope, configService, $anchorScroll) {
                         items: [
                             {
                                 type: "help",
-                                helpvalue: "<p>" + helptext.replace("<![CDATA[", "").replace("]]>", "") + "</p>"
+                                helpvalue: "<p>" + helptext + "</p>"
                             }
                         ]
                     };
@@ -200,7 +199,6 @@ function ConfigFormCtrl($scope, configService, $anchorScroll) {
 
             handleModule(treeWalkerModules[0].module);
             handleModule(nonTreeWalkerModules);
-            
 
             scopeForm.push({
                 type: "submit",
@@ -213,7 +211,7 @@ function ConfigFormCtrl($scope, configService, $anchorScroll) {
                     configService.restoreRefaults().then(function (result) {
                         $scope.$parent.alerts = [];
                         if(result) {
-                            $scope.loadModel(true);
+                            loadModel(true);
                             $scope.$parent.alerts.push({msg: 'Configuration restored', type: 'success'});
                         }else{
                             $scope.$parent.alerts.push({msg: 'Error restoring configuration defaults', type: 'danger'});
@@ -224,20 +222,15 @@ function ConfigFormCtrl($scope, configService, $anchorScroll) {
             });
 
             $scope.form = scopeForm;
-
             $scope.schema.properties = schemaFields;
             $scope.model = scopeModel;     
-
         });
     };
 
-    this.loadModel(false);
+    loadModel(false);
 
     $scope.onSubmit = function(form) {
-        // First we broadcast an event so all fields validate themselves
         $scope.$broadcast('schemaFormValidate');
-
-        // Then we check if the form is valid
         if (form.$valid) {
             configService.saveCurrentConfig().then(function (result) {
 
@@ -250,9 +243,8 @@ function ConfigFormCtrl($scope, configService, $anchorScroll) {
                 $anchorScroll();
             });
         }
-  }
+    }
 };
-
 
 function HeaderCtrl($scope, $location, lastResultService) {
     $scope.disableIfNoLatestResult = function () {
@@ -264,7 +256,7 @@ function HeaderCtrl($scope, $location, lastResultService) {
     $scope.isActive = function (viewLocation) { 
       return (viewLocation.length > 1 && $location.path().indexOf(viewLocation) == 0) || $location.path() === viewLocation;
     };
-}
+};
 
 function UploadCtrl($scope, $upload, $location, lastResultService) {
     $scope.$parent.alerts = [];
@@ -291,162 +283,21 @@ function UploadCtrl($scope, $upload, $location, lastResultService) {
                     $scope.$parent.alerts.push({msg: 'Error in analysis, please check config and source code.', type: 'danger' });
                 }
             });
-
-    }
-  };
+        }
+    };
 };
 
-function ResultsCtrl($scope, $http, $routeParams, $window, lastResultService) {
-
+function ResultsCtrl($scope, $http, $routeParams, $window, lastResultService, $filter) {
     $http.get('/results/api/' + $routeParams.id).
-
         success(function(data) {
             lastResultService.setLastResult($routeParams.id);
             $scope.currentUrl = data.currentUrl;
             $scope.results = data;
             $scope.cResults = data.checkstyleResults;
-
-            var rows = [];
-            angular.forEach(data.checkstyleResults.checkstyle.file, function(value, key) {  
-                var row = {
-                    "c": [
-                        {
-                            "v": value.$.name.split('/')[value.$.name.split('/').length -1]
-                        },
-                        {
-                            "v": $.grep(value.error, function(item){ return item.$.severity == "error"}).length
-                        },
-                        {
-                            "v": $.grep(value.error, function(item){ return item.$.severity == "warning"}).length
-                        },
-                        {
-                            "v": $.grep(value.error, function(item){ return item.$.severity == "info"}).length
-                        }
-                    ]
-                };
-                this.push(row);
-            }, rows);
-
-            var chart = {
-                "type": "ColumnChart",
-                "cssStyle": "height:400px; width:100%;",
-                "data": {
-                "cols": [
-                  {
-                    "id": "file",
-                    "label": "File",
-                    "type": "string",
-                    "p": {}
-                  },
-                  {
-                    "id": "error",
-                    "label": "Error",
-                    "type": "number",
-                    "p": {}
-                  },
-                  {
-                    "id": "warning",
-                    "label": "Warning",
-                    "type": "number",
-                    "p": {}
-                  },
-                  {
-                    "id": "info",
-                    "label": "Info",
-                    "type": "number",
-                    "p": {}
-                  }
-                ],
-                "rows": rows
-                },
-                "options": {
-                    "title": "Results per file and type",
-                    "isStacked": "true",
-                    "fill": 20,
-                    "displayExactValues": true,
-                    "vAxis": {
-                        "title": "Amount",
-                        "gridlines": {
-                            "count": 6
-                        }
-                    },
-                    "hAxis": {
-                        "title": "Files"
-                    }
-                },
-                "formatters": {},
-                "displayed": true
-            };
-
-            var pie = JSON.parse(JSON.stringify(chart));
-
-            pie.type = "PieChart";
-            pie.options.title = "Distribution results per file";
-
-            var bars = JSON.parse(JSON.stringify(chart));
-
-            bars.type = "BarChart";
-            bars.rows = [];
-            bars.cols = [];
-            bars.options.title = "Results per file and check";
-            bars.options.hAxis.title = "Error count";
-            bars.options.vAxis.title = "Files";
-
-            var barrows = [];
-            var barcols = [
-                {
-                    "id": "file",
-                    "label": "File",
-                    "type": "string",
-                    "p": {}
-                }
-            ];
-            angular.forEach(data.checkstyleResults.checkstyle.file, function(value, key) { 
-                angular.forEach(value.error , function(error, key) { 
-                    var barcol = {
-                        "id": error.$.source,
-                        "label": error.$.source.split('.')[error.$.source.split('.').length -1],
-                        "type": "number",
-                        "p": {}
-                    }
-                    if(barcols.indexOf(barcol)){
-                        barcols.push(barcol);
-                    } 
-                });
-            });
-
-            angular.forEach(data.checkstyleResults.checkstyle.file, function(value, key) {  
-                var barrow = {
-                    "c": [
-                        {
-                            "v": value.$.name.split('/')[value.$.name.split('/').length -1]
-                        }
-                    ]
-                };
-                angular.forEach(barcols , function(barcol, key) { 
-                    if(key > 0) {
-                        this.c.push(
-                            {
-                                "v": $.grep(value.error, function(item){ return item.$.source == barcol.id}).length
-                            }
-                        );
-                    }
-                    
-
-                },barrow);
-
-
-                this.push(barrow);
-            }, barrows);
-
-
-            bars.data.cols = barcols;
-            bars.data.rows = barrows;
-            bars.cssStyle =  "height:" +barcols.length * 30 + "px; width:100%;",
-
-            $scope.bars = bars;
-            $scope.chart = chart;
-            $scope.pie = pie;
+            
+            $scope.hBars = $filter('convertToGraph')(data.checkstyleResults.checkstyle.file,"hBars");;
+            $scope.vBars = $filter('convertToGraph')(data.checkstyleResults.checkstyle.file,"vBars");;
+            $scope.pie = $filter('convertToGraph')(data.checkstyleResults.checkstyle.file,"pie");;
     });
-}
+};
 

@@ -1,8 +1,7 @@
 describe('IndexCtrl', function() {
     var scope, httpBackend, createController;
 
-    beforeEach(inject(function($rootScope, $httpBackend, $controller) {
-        httpBackend = $httpBackend;
+    beforeEach(inject(function($rootScope, $controller) {
         scope = $rootScope.$new();
 
         createController = function() {
@@ -12,18 +11,9 @@ describe('IndexCtrl', function() {
         };
     }));
 
-    afterEach(function() {
-        httpBackend.verifyNoOutstandingExpectation();
-        httpBackend.verifyNoOutstandingRequest();
-    });
-
     it('runs without errors', function() {
         var controller = createController();
-
-        httpBackend.expect('GET', '/')
-            .respond(200, "ok");
         scope.$digest();
-        httpBackend.flush();
 
         expect(scope.alerts).toEqual([]);
         expect(scope.title).toEqual('JMV');
@@ -168,6 +158,7 @@ describe('UploadCtrl', function() {
 
 describe('ResultsCtrl', function() {
     beforeEach(module('myJmv.services'));
+    beforeEach(module('myJmv.filters'));
 
     var scope, createController;
     
@@ -178,7 +169,7 @@ describe('ResultsCtrl', function() {
     }
 
 
-    beforeEach(inject(function($rootScope, $controller, $httpBackend, _lastResultService_) {  
+    beforeEach(inject(function($rootScope, $controller, $httpBackend, _lastResultService_, $filter) {  
         scope = $rootScope.$new();
         lastResultService = _lastResultService_;
         routeParams =   {
@@ -203,8 +194,8 @@ describe('ResultsCtrl', function() {
         scope.$digest();
         httpBackend.flush(); 
 
-        expect(Object.keys(scope.bars).length > 0).toEqual(true);
-        expect(Object.keys(scope.chart).length > 0).toEqual(true);
+        expect(Object.keys(scope.hBars).length > 0).toEqual(true);
+        expect(Object.keys(scope.vBars).length > 0).toEqual(true);
         expect(Object.keys(scope.pie).length > 0).toEqual(true);
         
     });  

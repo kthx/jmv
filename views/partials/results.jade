@@ -1,9 +1,9 @@
-div(ng-controller="TabsCtrl", class="resultContainer")
+div(class="resultContainer")
     tabset(justified="true")
         tab(heading="Aggregated results") 
-            div(google-chart, chart="chart", style="{{chart.cssStyle}}")
-            div(google-chart, chart="pie", style="{{pie.cssStyle}}")
-            div(google-chart, chart="bars", style="{{bars.cssStyle}}")
+            div(google-chart, chart="vBars", ng-style="{ width: vBars.cssStyle.width, height:  vBars.cssStyle.height}")
+            div(google-chart, chart="pie", ng-style="{ width: pie.cssStyle.width, height:  pie.cssStyle.height}")
+            div(google-chart, chart="hBars", ng-style="{ width: hBars.cssStyle.width, height:  hBars.cssStyle.height}")
         tab(heading="Single file results")
             .col-md-3
                 ul(class="nav nav-stacked sidebar affix")

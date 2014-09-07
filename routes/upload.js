@@ -17,12 +17,12 @@ var randomString = function (len, bits){
 
 
 router.post("/", function(req, res) {    
-	var currentFolder = randomString(12);
-	var cwd = process.cwd();
-	if(req.files) {
-		mkdirp('./results/' + currentFolder + '/files/', function(err) {   
-			fs.rename(req.files.file.path, './results/' + currentFolder + '/files/' + req.files.file.originalname, function(){
-				mkdirp('./results/' + currentFolder + '/checkstyle/', function(err) {  
+    var currentFolder = randomString(12);
+    var cwd = process.cwd();
+    if(req.files) {
+        mkdirp('./results/' + currentFolder + '/files/', function(err) {   
+            fs.rename(req.files.file.path, './results/' + currentFolder + '/files/' + req.files.file.originalname, function(){
+                mkdirp('./results/' + currentFolder + '/checkstyle/', function(err) {  
                     var executeCheckStyle = function() {
                         exec('/usr/bin/checkstyle -c ' + cwd + '/config/checkstyle_config.xml -f xml -o ' 
                             + cwd + '/results/' + currentFolder + '/checkstyle/output.xml  \-r ' 
@@ -36,25 +36,22 @@ router.post("/", function(req, res) {
                         });
                     };
 
-					if(req.files.file.extension === 'zip') {
-						fs.createReadStream('./results/' + currentFolder + '/files/' + req.files.file.originalname)
-						.pipe(unzip.Extract({ path: './results/' + currentFolder + '/files/'  }))
-						.on('finish', function(){
-							fs.unlink('./results/' + currentFolder + '/files/' + req.files.file.originalname, function (err) {
-								if (err) throw err;
-							  	executeCheckStyle()
-							});
-							
-						});
-					} else{
-						executeCheckStyle();
-					}
-					
-				});
-			});
-		});    
-	}                                  
-                                         
+                    if(req.files.file.extension === 'zip') {
+                        fs.createReadStream('./results/' + currentFolder + '/files/' + req.files.file.originalname)
+                        .pipe(unzip.Extract({ path: './results/' + currentFolder + '/files/'  }))
+                        .on('finish', function(){
+                            fs.unlink('./results/' + currentFolder + '/files/' + req.files.file.originalname, function (err) {
+                                if (err) throw err;
+                                executeCheckStyle()
+                            });
+                        });
+                    } else{
+                        executeCheckStyle();
+                    }
+                });
+            });
+        });    
+    }
 }); 
 
 module.exports = router;

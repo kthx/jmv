@@ -11,7 +11,6 @@ module.exports = function(config){
         'public/bower_components/angular/angular.js',
         'public/bower_components/angular-mocks/angular-mocks.js',
         'public/js/lib/angular/angular-file-upload.js',
-        'https://raw.githubusercontent.com/velesin/jasmine-jquery/master/lib/jasmine-jquery.js',
         'public/js/prettify.js',
         'public/js/app.js',
         'public/js/services.js',

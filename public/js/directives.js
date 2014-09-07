@@ -19,26 +19,36 @@ angular.module('myJmv.directives', []).
                     return item.$.name.indexOf(scope.id) > 0; 
                 });
                 if(result.length > 0) {
+                    var icons = {
+                        error: "fire",
+                        warning: "exclamation-sign",
+                        info: "wrench"
+                    }
+
+                    var checkStyleInfoTemplate = function(value){ 
+                        return '<div class="checkstyle-severity-' + value.$.severity  +'">'
+                            + '<span class="glyphicon glyphicon-' + icons[value.$.severity]+ '"></span>'
+                            + (value.$.column != undefined 
+                                ?'<span class="checkstyle-column"> <b>Column</b>: ' + value.$.column + '</span>'
+                                :'')
+                            + '<span class="checkstyle-message"> <b>Message</b>:' + value.$.message + '</span>'
+                            + '<span class="checkstyle-source"> <b>Source</b>: ' + value.$.source + '</span>'
+                            + '</div>'
+                    };
+                    
                     angular.forEach(result[0].error, function(value, key){
+
                         if(parseInt(value.$.line) > 0 ) {
                             this.find('li').eq(parseInt(value.$.line) - 1)
-                                .addClass('checkstyle-severity-' + value.$.severity)
-                                .append('<div class="checkstyle-info">'
-                                    + (value.$.column != undefined ?'<span class="checkstyle-column"><b>Column</b>: ' + value.$.column + '</span>':'')
-                                    + '<span class="checkstyle-message"> <b>Message</b>:' + value.$.message + '</span>'
-                                    + '<span class="checkstyle-source"> <b>Source</b>: ' + value.$.source + '</span>'
-                                    + '</div>');
+                                .addClass('checkstyle-info')
+                                .append(checkStyleInfoTemplate(value));
                         }else{
                             var $generalErrors = $(element).prev();
                             if($generalErrors.find('.none')) {
                                 $generalErrors.find('.none').remove();
                             }
-                            $generalErrors.find('ul.GeneralErrors').append('<li class="checkstyle-severity-' + value.$.severity + '">'
-                                + '<div class="checkstyle-info">'
-                                + (value.$.column != undefined ?'<span class="checkstyle-column"><b>Column</b>: ' + value.$.column + '</span>':'')
-                                + '<span class="checkstyle-message"> <b>Message</b>:' + value.$.message + '</span>'
-                                + '<span class="checkstyle-source"> <b>Source</b>: ' + value.$.source + '</span>'
-                                + '</div>'
+                            $generalErrors.find('ul.GeneralErrors').append('<li class="checkstyle-info">'
+                                + checkStyleInfoTemplate(value)
                                 + '</li>');
                         }
                     }, $(element));
@@ -53,10 +63,6 @@ angular.module('myJmv.directives', []).
         return function(scope, element, attrs) {
             element.bind('click', function(event) {
                 event.stopPropagation();
-                var off = scope.$on('$locationChangeStart', function(ev) {
-                    off();
-                    ev.preventDefault();
-                });
                 var location = attrs.scrollTo;
                 $location.hash(location);
                 $anchorScroll();

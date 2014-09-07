@@ -24,7 +24,7 @@ app.set('view options', {
 app.use(multer({ dest: './temp/'}));
 app.use(favicon());
 app.use(logger('dev'));
-app.use(bodyParser( { keepExtensions: true, uploadDir: __dirname + '/app/uploads' } ));
+app.use(bodyParser( { keepExtensions: true, uploadDir: './temp/' } ));
 
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));

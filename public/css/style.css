@@ -119,11 +119,21 @@ a {
 li.L0, li.L1, li.L2, li.L3,
 li.L5, li.L6, li.L7, li.L8
 { list-style-type: decimal !important }
-.linenums .checkstyle-severity-error {
+.linenums .checkstyle-severity-error{
     background-color: #ee6666; 
+    color: #000;
+}
+.linenums .checkstyle-severity-info{
+    background-color: #8EFA78; 
+    color: #000;
 }
 .linenums .checkstyle-severity-warning{
     background-color: #EAF759; 
+    color: #000;
+}
+.GeneralErrors {
+    list-style: none;
+    padding-left: 0;
 }
 .navbar-inverse .navbar-brand {
     color: #fff;
@@ -181,3 +191,4 @@ legend {
 .fileTitle {
     padding-top: 125px;
 }
+.nav, .pagination, .carousel, .panel-title a { cursor: pointer; }

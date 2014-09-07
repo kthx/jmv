@@ -21,15 +21,11 @@ angular.module('myJmv', [
             templateUrl: 'partials/config',
             controller: ConfigCtrl
         }).
-            when('/upload', {
-            templateUrl: '/upload',
-            controller: UploadCtrl
-        }).
-            when('/results/:id', {
+        when('/results/:id', {
             templateUrl: 'partials/results',
             controller: ResultsCtrl
         }).
-            otherwise({
+        otherwise({
             redirectTo: '/'
         });
     $locationProvider.html5Mode(true);
